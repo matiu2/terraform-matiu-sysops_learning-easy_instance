@@ -16,7 +16,7 @@ resource "aws_security_group" "cloud_watch" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  count             = var.egress_ports
+  count             = length(var.ingress_ports)
   security_group_id = aws_security_group.cloud_watch.id
   type              = "ingress"
   protocol          = "tcp"
@@ -26,7 +26,7 @@ resource "aws_security_group_rule" "ingress" {
 }
 
 resource "aws_security_group_rule" "egress" {
-  count             = var.egress_ports
+  count             = length(var.egress_ports)
   security_group_id = aws_security_group.cloud_watch.id
   type              = "egress"
   protocol          = "tcp"
@@ -48,7 +48,6 @@ resource "aws_instance" "sysops_study" {
   ami                         = local.ami_id
   instance_type               = "t2.micro"
   associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.cloud_watch.id
   user_data                   = var.user_data
   security_groups             = [aws_security_group.cloud_watch.name]
   key_name                    = aws_key_pair.lab_key.key_name
